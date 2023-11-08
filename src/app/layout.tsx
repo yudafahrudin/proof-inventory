@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Proof Inventory",
-  description: "simple inventory of café",
+  description: "simple inventory for café",
 };
 
 interface Props {
