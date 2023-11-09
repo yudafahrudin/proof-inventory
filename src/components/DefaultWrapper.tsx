@@ -15,8 +15,8 @@ const DefaultWrapper: React.FC<Props> = ({ children, title, leftIcon }) => {
       <Stack direction="row">
         <AppBar position="static">
           <Toolbar>
-            {leftIcon ? leftIcon : <Computer color="inherit" />}
-            <Typography ml={2}>PROOF INVENTORY</Typography>
+            {leftIcon || <Computer color="inherit" />}
+            <Typography ml={2}>{title || "PROOF INVENTORY"}</Typography>
             <Stack direction="row" sx={{ marginLeft: "auto" }}>
               <AccountCircle />
               <Typography ml={1}> halo!</Typography>
