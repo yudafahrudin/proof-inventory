@@ -14,6 +14,7 @@ import {
   Box,
   Typography,
   Divider,
+  Button,
 } from "@mui/material";
 import { MuiFileInput } from "mui-file-input";
 
@@ -36,6 +37,13 @@ const StockUpdate: React.FC = () => {
 
   const goBack = () => {
     router.push("/");
+  };
+
+  const openTemplate = () => {
+    window.open(
+      "https://docs.google.com/spreadsheets/d/1wbkvUy404C13WSvAlSR2HMaRm3i-D86amSBmA3eMyFs/edit?usp=drive_link",
+      "_blank"
+    );
   };
 
   const handleChangeOne = async (file: File | null) => {
@@ -67,18 +75,20 @@ const StockUpdate: React.FC = () => {
       }
     >
       <Stack mt={2} spacing={2}>
-        <FormLabel>
-          <MuiFileInput
-            label="tambahkan list stock terbaru"
-            onChange={handleChangeOne}
-          />
-        </FormLabel>
+        <MuiFileInput
+          label="tambahkan daftar stock terbaru sesuai template"
+          onChange={handleChangeOne}
+          inputProps={{
+            accept: ".xlsx, .xls, .csv",
+          }}
+        />
+
+        <Button onClick={openTemplate}>Download Template</Button>
         <Box>
           <List dense>
             {listStock.map((stock) => {
               return (
                 <>
-                  {" "}
                   <ListItem key={stock[0]}>
                     <ListItemIcon>
                       <Edit sx={{ fontSize: 17 }} />
