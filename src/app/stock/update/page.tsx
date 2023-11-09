@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { KeyboardBackspace, NavigateNext } from "@mui/icons-material";
+import { KeyboardBackspace, Edit } from "@mui/icons-material";
 import {
   IconButton,
   FormLabel,
@@ -13,6 +13,7 @@ import {
   Stack,
   Box,
   Typography,
+  Divider,
 } from "@mui/material";
 import { MuiFileInput } from "mui-file-input";
 
@@ -72,17 +73,21 @@ const StockUpdate: React.FC = () => {
             onChange={handleChangeOne}
           />
         </FormLabel>
-        <Box width={300}>
+        <Box>
           <List dense>
             {listStock.map((stock) => {
               return (
-                <ListItem key={stock[0]}>
-                  <ListItemIcon>
-                    <NavigateNext />
-                  </ListItemIcon>
-                  <ListItemText>{stock[0]}</ListItemText>
-                  <Typography variant="subtitle2">{stock[1]}</Typography>
-                </ListItem>
+                <>
+                  {" "}
+                  <ListItem key={stock[0]}>
+                    <ListItemIcon>
+                      <Edit sx={{ fontSize: 17 }} />
+                    </ListItemIcon>
+                    <ListItemText>{stock[0]}</ListItemText>
+                    <Typography variant="subtitle2">{stock[1]}</Typography>
+                  </ListItem>
+                  <Divider />
+                </>
               );
             })}
           </List>
