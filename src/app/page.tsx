@@ -17,11 +17,16 @@ const Home: React.FC = () => {
     router.push("/stock/update");
   };
 
+  const goStockInReport = () => {
+    router.push("/stock/report");
+  };
+
   return (
     <DefaultWrapper>
       <Stack spacing={1}>
-        <Button onClick={goStockUpdate}>Update Stock Data</Button>
-        <Button onClick={goStockIn}>Input Stock In</Button>
+        <Button onClick={goStockUpdate}>Stock Data</Button>
+        <Button onClick={goStockIn}>Stock In Input</Button>
+        <Button onClick={goStockInReport}>Stock In Report</Button>
       </Stack>
     </DefaultWrapper>
   );
