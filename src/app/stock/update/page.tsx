@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { KeyboardBackspace, NavigateNext } from "@mui/icons-material";
 import {
@@ -18,13 +18,42 @@ import { MuiFileInput } from "mui-file-input";
 
 import DefaultWrapper from "@/components/DefaultWrapper";
 
-import { STOCKS } from "../config";
-
 const StockUpdate: React.FC = () => {
   const router = useRouter();
+  const [listStock, setListStock] = useState([]);
+
+  useEffect(() => {
+    handleGetStock();
+  }, []);
+
+  const handleGetStock = async () => {
+    await fetch("/api/v1/stock").then(async (res) => {
+      const { data } = await res.json();
+      setListStock(JSON.parse(data));
+    });
+  };
 
   const goBack = () => {
     router.push("/");
+  };
+
+  const handleChangeOne = async (file: File | null) => {
+    if (!file) return;
+
+    try {
+      const body = new FormData();
+      body.append("file", file);
+
+      await fetch("/api/v1/stock", {
+        method: "POST",
+        body,
+      }).then(async () => {
+        setListStock([]);
+        handleGetStock();
+      });
+    } catch (e: any) {
+      console.error(e);
+    }
   };
 
   return (
@@ -38,18 +67,21 @@ const StockUpdate: React.FC = () => {
     >
       <Stack mt={2} spacing={2}>
         <FormLabel>
-          <MuiFileInput label="tambahkan list stock terbaru" />
+          <MuiFileInput
+            label="tambahkan list stock terbaru"
+            onChange={handleChangeOne}
+          />
         </FormLabel>
         <Box width={300}>
           <List dense>
-            {STOCKS.map((stock) => {
+            {listStock.map((stock) => {
               return (
-                <ListItem key={stock.title}>
+                <ListItem key={stock[0]}>
                   <ListItemIcon>
                     <NavigateNext />
                   </ListItemIcon>
-                  <ListItemText>{stock.title}</ListItemText>
-                  <Typography variant="subtitle2">{stock.uom}</Typography>
+                  <ListItemText>{stock[0]}</ListItemText>
+                  <Typography variant="subtitle2">{stock[1]}</Typography>
                 </ListItem>
               );
             })}

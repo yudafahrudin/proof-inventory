@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { KeyboardBackspace } from "@mui/icons-material";
 import {
@@ -15,10 +15,21 @@ import {
 import DefaultWrapper from "@/components/DefaultWrapper";
 import { format } from "date-fns";
 
-import { STOCKS } from "../config";
-
 const StockIn: React.FC = () => {
   const router = useRouter();
+
+  const [listStock, setListStock] = useState([]);
+
+  useEffect(() => {
+    handleGetStock();
+  }, []);
+
+  const handleGetStock = async () => {
+    await fetch("/api/v1/stock").then(async (res) => {
+      const { data } = await res.json();
+      setListStock(JSON.parse(data));
+    });
+  };
 
   const goBack = () => {
     router.push("/");
@@ -42,15 +53,15 @@ const StockIn: React.FC = () => {
         </Box>
       </Stack>
       <Stack>
-        {STOCKS.map((stock) => {
+        {listStock.map((stock) => {
           return (
             <TextField
-              key={stock.title}
+              key={stock[0]}
               type="number"
               id="input-with-icon-textfield"
-              label={stock.title}
+              label={stock[0]}
               InputProps={{
-                endAdornment: stock.uom,
+                endAdornment: stock[1],
               }}
               variant="standard"
             />
