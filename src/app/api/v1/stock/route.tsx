@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile as readFileXL, set_fs, utils } from "xlsx";
 import { writeFile, readFile } from "fs/promises";
-import { join } from "path";
-import { cwd } from "process";
 
-const ASSET_PATH = join(cwd(), "src/assets/", "");
-const PROOF_ITEM_JSON_FILE = "proof-stock.json";
-const PROOF_ITEM_XLSX_FILE = "template-item.xlsx";
+// DB
+import { ASSET_PATH, PROOF_STOCK_DB, PROOF_ITEM_XLSX_FILE } from "@/configs/db";
 
 export async function GET() {
   try {
-    const data = await readFile(ASSET_PATH + PROOF_ITEM_JSON_FILE, "utf8");
+    const data = await readFile(ASSET_PATH + PROOF_STOCK_DB, "utf8");
     return NextResponse.json({ data: data.toString() });
   } catch (error) {
     return NextResponse.json({ error });
@@ -35,10 +32,7 @@ export async function POST(request: NextRequest) {
       { header: 1 }
     );
 
-    await writeFile(
-      ASSET_PATH + PROOF_ITEM_JSON_FILE,
-      JSON.stringify(sheetData)
-    );
+    await writeFile(ASSET_PATH + PROOF_STOCK_DB, JSON.stringify(sheetData));
 
     return NextResponse.json({ success: true });
   } catch (error) {
