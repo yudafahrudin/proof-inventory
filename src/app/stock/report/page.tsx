@@ -50,6 +50,14 @@ const StockInReport: React.FC = () => {
   //     setActie(newValue);
   //   };
 
+  const handleStockDownload = async () => {
+    await fetch("/api/v1/stock/in/download").then(async (res) => {
+      const { data } = await res.json();
+      const dataParse = JSON.parse(data);
+      console.log(dataParse);
+    });
+  };
+
   const handleOnClick = (index: number) => {
     setIndexActie(index);
   };
@@ -63,34 +71,45 @@ const StockInReport: React.FC = () => {
         </IconButton>
       }
     >
-      {!listStockIn.length ? "data kosong" : null}
-      <Tabs value={indexActive}>
-        {listStockIn.map((stock, index) => {
-          return (
-            <Tab label={stock.date} onClick={() => handleOnClick(index)} />
-          );
-        })}
-      </Tabs>
       <Stack spacing={2}>
-        <Grid container spacing={2}>
-          {listStockIn[indexActive]?.listStock.map((stockData, index) => {
+        <Stack>
+          <Button variant="contained" onClick={handleStockDownload}>
+            Download All Report
+          </Button>
+        </Stack>
+        {!listStockIn.length ? <Box>data kosong</Box> : null}
+        <Tabs value={indexActive}>
+          {listStockIn.map((stock, index) => {
             return (
-              <>
-                <Grid item xs={6}>
-                  <Typography variant="subtitle1">{stockData}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="subtitle2">
-                    {listStockIn[indexActive].listValue[index]}
-                  </Typography>
-                </Grid>
-                <Grid xs={12}>
-                  <Divider />
-                </Grid>
-              </>
+              <Tab
+                key={`${stock.date}`}
+                label={stock.date}
+                onClick={() => handleOnClick(index)}
+              />
             );
           })}
-        </Grid>
+        </Tabs>
+        <Stack spacing={2}>
+          <Grid container spacing={2}>
+            {listStockIn[indexActive]?.listStock.map((stockData, index) => {
+              return (
+                <>
+                  <Grid item xs={6}>
+                    <Typography variant="subtitle1">{stockData}</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="subtitle2">
+                      {listStockIn[indexActive].listValue[index]}
+                    </Typography>
+                  </Grid>
+                  <Grid xs={12}>
+                    <Divider />
+                  </Grid>
+                </>
+              );
+            })}
+          </Grid>
+        </Stack>
       </Stack>
     </DefaultWrapper>
   );
