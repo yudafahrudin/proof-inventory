@@ -24,7 +24,9 @@ const Home: React.FC = () => {
   return (
     <DefaultWrapper>
       <Stack spacing={1}>
-        <Button onClick={goStockUpdate}>Stock</Button>
+        <Button variant="outlined" onClick={goStockUpdate}>
+          Stock
+        </Button>
         {/* <Button onClick={goStockIn}>Stock In</Button>
         <Button onClick={goStockInReport}>Stock In Report</Button> */}
       </Stack>
