@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const dataParse = JSON.parse(db);
     dataParse.push(data);
 
-    await writeFile(ASSET_PATH + PROOF_STOCK_IN_DB, JSON.stringify(dataParse));
+    await writeFile(ASSET_PATH + PROOF_STOCK_IN_DB, JSON.stringify([]));
 
     return NextResponse.json({ success: true });
   } catch (error) {
