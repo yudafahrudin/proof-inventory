@@ -50,20 +50,32 @@ const StockUpdate: React.FC = () => {
   }, []);
 
   const handleGetStock = async () => {
-    await fetch("/api/stock").then(async (res) => {
-      const data = await res.json();
+    setLoading(true);
+    try {
+      await fetch("/api/stock").then(async (res) => {
+        const data = await res.json();
+        setListStock(data);
+      });
+    } catch {
+    } finally {
       setLoading(false);
-      setListStock(data);
-    });
+    }
   };
 
   const handleDeleteAllStock = async () => {
-    await fetch("/api/stock/update", {
-      headers: { "Content-Type": "application/json" },
-      method: "DELETE",
-    }).then(async () => {
-      setListStock([]);
-    });
+    setLoading(true);
+    try {
+      await fetch("/api/stock/delete", {
+        headers: { "Content-Type": "application/json" },
+        method: "DELETE",
+        body: JSON.stringify({ id: null }),
+      }).then(async () => {
+        setListStock([]);
+      });
+    } catch {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteStockById = async () => {
@@ -83,12 +95,12 @@ const StockUpdate: React.FC = () => {
 
   const handleChangeFile = async (file: File | null) => {
     if (!file) return;
-
+    setLoading(true);
     try {
       const body = new FormData();
       body.append("file", file);
 
-      await fetch("/api/stock/update", {
+      await fetch("/api/stock/update/excel", {
         method: "POST",
         body,
       }).then(async () => {
@@ -160,7 +172,11 @@ const StockUpdate: React.FC = () => {
             <ContentPaste />
           </Button>
         </Stack>
-        <Button variant="outlined" onClick={handleDeleteAllStock}>
+        <Button
+          disabled={loading}
+          variant="outlined"
+          onClick={handleDeleteAllStock}
+        >
           Hapus Semua Data Stock
         </Button>
         {loading && (
