@@ -111,7 +111,7 @@ const StockUpdate: React.FC = () => {
     }
   };
 
-  const goBack = () => {
+  const goBacks = () => {
     router.push("/");
   };
 
@@ -153,7 +153,7 @@ const StockUpdate: React.FC = () => {
     <DefaultWrapper
       title="UPDATE STOCK DATA"
       leftIcon={
-        <IconButton onClick={goBack}>
+        <IconButton onClick={goBacks}>
           <KeyboardBackspace sx={{ color: "white" }} />
         </IconButton>
       }
