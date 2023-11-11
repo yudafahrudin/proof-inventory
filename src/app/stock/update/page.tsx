@@ -52,7 +52,7 @@ const StockUpdate: React.FC = () => {
   const handleGetStock = async () => {
     setLoading(true);
     try {
-      await fetch("/api/stock").then(async (res) => {
+      await fetch("/api/stock", { cache: "no-store" }).then(async (res) => {
         const data = await res.json();
         setListStock(data);
       });
@@ -67,6 +67,7 @@ const StockUpdate: React.FC = () => {
     try {
       await fetch("/api/stock/delete", {
         headers: { "Content-Type": "application/json" },
+        cache: "no-store",
         method: "DELETE",
         body: JSON.stringify({ id: null }),
       }).then(async () => {
@@ -82,15 +83,12 @@ const StockUpdate: React.FC = () => {
     setLoading(true);
     await fetch("/api/stock/delete", {
       headers: { "Content-Type": "application/json" },
+      cache: "no-store",
       method: "DELETE",
       body: JSON.stringify({ id: activeDelete?.id }),
     }).then(async () => {
       setLoading(false);
       handleGetStock();
-      // const transform = listStock.filter(
-      //   (stock) => stock.id !== activeDelete?.id
-      // );
-      // setListStock(transform);
     });
   };
 
@@ -103,6 +101,7 @@ const StockUpdate: React.FC = () => {
 
       await fetch("/api/stock/update/excel", {
         method: "POST",
+        cache: "no-store",
         body,
       }).then(async () => {
         handleGetStock();
@@ -138,6 +137,7 @@ const StockUpdate: React.FC = () => {
     setLoading(true);
     try {
       await fetch("/api/stock/update", {
+        cache: "no-store",
         method: "POST",
         body: JSON.stringify(activeEditTemp),
       }).then(async () => {
