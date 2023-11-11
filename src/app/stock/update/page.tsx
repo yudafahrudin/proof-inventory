@@ -70,7 +70,7 @@ const StockUpdate: React.FC = () => {
         method: "DELETE",
         body: JSON.stringify({ id: null }),
       }).then(async () => {
-        setListStock([]);
+        handleGetStock();
       });
     } catch {
     } finally {
@@ -86,10 +86,11 @@ const StockUpdate: React.FC = () => {
       body: JSON.stringify({ id: activeDelete?.id }),
     }).then(async () => {
       setLoading(false);
-      const transform = listStock.filter(
-        (stock) => stock.id !== activeDelete?.id
-      );
-      setListStock(transform);
+      handleGetStock();
+      // const transform = listStock.filter(
+      //   (stock) => stock.id !== activeDelete?.id
+      // );
+      // setListStock(transform);
     });
   };
 
