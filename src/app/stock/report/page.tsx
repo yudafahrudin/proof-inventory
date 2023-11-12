@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { KeyboardBackspace } from "@mui/icons-material";
 import {
@@ -14,19 +14,25 @@ import {
   Grid,
   Tabs,
   Tab,
+  LinearProgress,
 } from "@mui/material";
 import DefaultWrapper from "@/components/DefaultWrapper";
 import { format } from "date-fns";
 
 interface StockInInterface {
-  date: string;
-  listValue: any[];
-  listStock: any[];
+  date_in: string;
+  stock_id: number;
+  value: number;
+}
+
+interface StockInTransfromInterface {
+  [id: string]: StockInInterface[];
 }
 
 const StockInReport: React.FC = () => {
   const router = useRouter();
 
+  const [loading, setLoading] = useState(true);
   const [listStockIn, setListStockIn] = useState<StockInInterface[]>([]);
   const [indexActive, setIndexActie] = useState(0);
 
@@ -35,11 +41,37 @@ const StockInReport: React.FC = () => {
   }, []);
 
   const handleGetStockIn = async () => {
-    await fetch("/api/v1/stock/in").then(async (res) => {
-      const { data } = await res.json();
-      setListStockIn(JSON.parse(data).reverse());
-    });
+    try {
+      await fetch("/api/stock/report").then(async (res) => {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setListStockIn(data);
+        }
+      });
+    } catch {
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const transformStockIn = useMemo(() => {
+    let stockInTransform: StockInTransfromInterface;
+    stockInTransform = {};
+
+    // populate key
+    listStockIn.forEach((stock) => {
+      stockInTransform[stock.date_in] = [];
+    });
+
+    // populate data
+    listStockIn.forEach((stock) => {
+      if (stockInTransform[stock.date_in]) {
+        stockInTransform[stock.date_in].push(stock);
+      }
+    });
+
+    return stockInTransform;
+  }, [listStockIn]);
 
   const goBack = () => {
     router.push("/");
@@ -71,19 +103,24 @@ const StockInReport: React.FC = () => {
         </IconButton>
       }
     >
+      {loading && (
+        <Box sx={{ width: "100%" }}>
+          <LinearProgress />
+        </Box>
+      )}
       <Stack spacing={2}>
         <Stack>
-          <Button variant="contained" onClick={handleStockDownload}>
+          {/* <Button variant="contained" onClick={handleStockDownload}>
             Download All Report
-          </Button>
+          </Button> */}
         </Stack>
-        {!listStockIn.length ? <Box>data kosong</Box> : null}
+        {!transformStockIn ? <Box>data kosong</Box> : null}
         <Tabs value={indexActive}>
-          {listStockIn.map((stock, index) => {
+          {Object.keys(transformStockIn).map((key, index) => {
             return (
               <Tab
-                key={`${stock.date}`}
-                label={stock.date}
+                key={`${key}`}
+                label={key}
                 onClick={() => handleOnClick(index)}
               />
             );
@@ -91,7 +128,7 @@ const StockInReport: React.FC = () => {
         </Tabs>
         <Stack spacing={2}>
           <Grid container spacing={2}>
-            {listStockIn[indexActive]?.listStock.map((stockData, index) => {
+            {/* {listStockIn[indexActive]?.listStock.map((stockData, index) => {
               return (
                 <>
                   <Grid item xs={6}>
@@ -107,7 +144,7 @@ const StockInReport: React.FC = () => {
                   </Grid>
                 </>
               );
-            })}
+            })} */}
           </Grid>
         </Stack>
       </Stack>

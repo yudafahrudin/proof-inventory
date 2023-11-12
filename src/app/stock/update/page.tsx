@@ -29,21 +29,18 @@ import Modal from "@/components/Modal";
 import ModalDelete from "@/components/Modal";
 import DefaultWrapper from "@/components/DefaultWrapper";
 
-interface ListStockInterface {
-  id: string;
-  name: string;
-  code: string;
-  uom: string;
-}
+// intefaces
+import { StockInterface } from "@/configs/interfaces/stock";
+
 const StockUpdate: React.FC = () => {
   const router = useRouter();
-  const [listStock, setListStock] = useState<ListStockInterface[]>([]);
+  const [listStock, setListStock] = useState<StockInterface[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
-  const [activeDelete, setActiveDelete] = useState<ListStockInterface>();
-  const [activeEdit, setActiveEdit] = useState<ListStockInterface>();
-  const [activeEditTemp, setActiveEditTemp] = useState<ListStockInterface>();
+  const [activeDelete, setActiveDelete] = useState<StockInterface>();
+  const [activeEdit, setActiveEdit] = useState<StockInterface>();
+  const [activeEditTemp, setActiveEditTemp] = useState<StockInterface>();
 
   useEffect(() => {
     handleGetStock();
@@ -122,7 +119,7 @@ const StockUpdate: React.FC = () => {
     );
   };
 
-  const handleEdit = (type: keyof ListStockInterface, value: string) => {
+  const handleEdit = (type: keyof StockInterface, value: string) => {
     const transform = {
       id: activeEditTemp?.id || "",
       name: activeEditTemp?.name || "",

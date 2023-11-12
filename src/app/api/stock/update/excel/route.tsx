@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
       (data: any) => data.length > 0
     );
 
-    const dateNew = new Date().toISOString();
+    const dateNow = new Date().toISOString();
 
     transfromDataFromExcel.forEach(async (data: any) => {
-      await sql`INSERT INTO STOCKS (name, code, uom, created_at) VALUES (${data[0]}, ${data[1]}, ${data[2]}, ${dateNew});`;
+      await sql`INSERT INTO STOCKS (name, code, uom, created_at) VALUES (${data[0]}, ${data[1]}, ${data[2]}, ${dateNow});`;
     });
     return NextResponse.json({
       success: true,

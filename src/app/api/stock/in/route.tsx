@@ -1,34 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, readFile } from "fs/promises";
+import { sql } from "@vercel/postgres";
 
-// DB
-import { ASSET_PATH, PROOF_STOCK_IN_DB } from "@/configs/db";
-
-interface Payload {
-  date: string;
-  listStock: any[];
-  listValue: any[];
-}
-
-export async function GET() {
-  try {
-    const data = await readFile(ASSET_PATH + PROOF_STOCK_IN_DB, "utf8");
-    return NextResponse.json({ data: data.toString() });
-  } catch (error) {
-    return NextResponse.json({ error });
-  }
-}
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
+  const data = await request.json();
+  const dateNow = new Date().toISOString();
+
   try {
-    const data: Payload = await request.json();
-    const db = await readFile(ASSET_PATH + PROOF_STOCK_IN_DB, "utf8");
-    const dataParse = JSON.parse(db);
-    dataParse.push(data);
+    data.forEach(async (stockIn: any) => {
+      await sql`INSERT INTO STOCKS_IN (date_in, stock_id, value, created_at) VALUES (${stockIn.date_in}, ${stockIn.stock_id}, ${stockIn.value}, ${dateNow});`;
+    });
 
-    await writeFile(ASSET_PATH + PROOF_STOCK_IN_DB, JSON.stringify([]));
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+    });
   } catch (error) {
     return NextResponse.json({ error });
   }

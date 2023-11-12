@@ -11,67 +11,86 @@ import {
   TextField,
   Box,
   Button,
+  Divider,
+  LinearProgress,
 } from "@mui/material";
-import DefaultWrapper from "@/components/DefaultWrapper";
 import { format } from "date-fns";
 
-interface StockInterface {
-  stockName: string;
-  uom: string;
-  value: number;
+import DefaultWrapper from "@/components/DefaultWrapper";
+
+import { StockInterface } from "@/configs/interfaces/stock";
+
+interface StockInInterface {
+  date_in: string;
+  stock_id: number;
+  name: string;
+  value: string;
 }
 
 const StockIn: React.FC = () => {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(true);
   const [listStock, setListStock] = useState<StockInterface[]>([]);
-
+  const [stockIn, setStockIn] = useState<StockInInterface[]>([]);
+  const dateNow = format(new Date(), "dd/MM/yyyy");
   useEffect(() => {
     handleGetStock();
   }, []);
 
   const handleGetStock = async () => {
-    await fetch("/api/v1/stock").then(async (res) => {
-      const { data } = await res.json();
-      const dataParse = JSON.parse(data);
-
-      const transform = dataParse.map((stockdata: any[]) => {
-        return {
-          stockName: stockdata[0],
-          uom: stockdata[1],
-          value: null,
-        };
+    setLoading(true);
+    try {
+      await fetch("/api/stock", { cache: "no-store" }).then(async (res) => {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setListStock(data);
+          setStockIn(
+            data.map((stock: StockInterface) => {
+              return {
+                date_in: dateNow,
+                stock_id: Number(stock.id),
+                name: stock.name,
+                value: "",
+              };
+            })
+          );
+        }
       });
-
-      setListStock(transform);
-    });
+    } catch {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmitStockIn = async () => {
-    const bodyData = {
-      date: format(new Date(), "dd/MM/yyyy"),
-      listStock: listStock.map((stock) => stock.stockName),
-      listValue: listStock.map((stock) => stock.value),
-    };
-
-    await fetch("/api/v1/stock/in", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bodyData),
-    }).then(async () => {
-      gotStockInReport();
-    });
+    setLoading(true);
+    try {
+      await fetch("/api/stock/in", {
+        method: "POST",
+        body: JSON.stringify(stockIn),
+      }).then(async () => {
+        gotStockInReport;
+      });
+    } catch (e: any) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    stock: StockInterface
   ) => {
-    const stockInData = listStock[index];
-    stockInData.value = Number(e.target.value);
-    setListStock([...listStock]);
+    setStockIn((prev) => {
+      prev.forEach((stockIn) => {
+        if (stockIn.stock_id === Number(stock.id)) {
+          stockIn.value = e.target.value;
+        }
+      });
+
+      return [...prev];
+    });
   };
 
   const goBack = () => {
@@ -103,20 +122,27 @@ const StockIn: React.FC = () => {
         </Box>
       </Stack>
 
+      <Divider />
+      {loading && (
+        <Box sx={{ width: "100%" }}>
+          <LinearProgress />
+        </Box>
+      )}
       <Stack>
         {listStock.map((stock, index) => {
           return (
             <TextField
-              key={stock.stockName}
+              key={stock.id}
               type="number"
               id="input-with-icon-textfield"
-              label={stock.stockName}
+              label={stock.name}
               InputProps={{
                 endAdornment: stock.uom,
               }}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleChange(e, index)
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                console.log(222);
+                handleChange(e, stock);
+              }}
               variant="standard"
             />
           );

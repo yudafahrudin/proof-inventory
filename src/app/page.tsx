@@ -27,8 +27,12 @@ const Home: React.FC = () => {
         <Button variant="outlined" onClick={goStockUpdate}>
           Stock
         </Button>
-        {/* <Button onClick={goStockIn}>Stock In</Button>
-        <Button onClick={goStockInReport}>Stock In Report</Button> */}
+        <Button variant="outlined" onClick={goStockIn}>
+          Stock In
+        </Button>
+        <Button variant="outlined" onClick={goStockInReport}>
+          Stock In Report
+        </Button>
       </Stack>
     </DefaultWrapper>
   );
